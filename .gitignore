@@ -34,9 +34,9 @@
 *.dylib
 
 # Executables
-.exe
-.obj
-.tds
+*.exe
+*.obj
+*.tds
 *.out
 *.app
 *.i*86
