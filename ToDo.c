@@ -18,6 +18,7 @@ void mostrarTarea(Tarea tarea);
 //void mostrar(Tarea **arr_tareas);
 int consultaTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad);
 void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas);
+
 void buscaTareaPalabra(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas, char *busqueda);
 void liberarMemoria(Tarea **arr_tareas, int cantidad);
 
@@ -170,6 +171,9 @@ void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad
         }
     }
 }
+
+
+
 
 void buscaTareaPalabra(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas, char *busqueda)
 {
