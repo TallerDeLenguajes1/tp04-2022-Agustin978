@@ -172,7 +172,8 @@ void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad
         scanf("%d", &ID_buscar);
         fflush(stdin);
     } while (ID_buscar<0);
-    
+
+    printf("\n*****Realizando busqueda de la tarea con ID %d en las tareas completadas*****\n", ID_buscar);
     for(int i = 0; i < completadas; i++)
     {
         if(arr_tareasRealizadas[i]->TareaId == ID_buscar)
@@ -182,6 +183,7 @@ void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad
         }
     }
 
+    printf("\n*****Realizando busqueda de la tarea con ID %d en las tareas faltantes*****\n", ID_buscar);
     for (int j = 0; j < cantidad; j++)
     {
         if(arr_tareas[j] != NULL && arr_tareas[j]->TareaId == ID_buscar)
