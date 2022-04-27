@@ -18,6 +18,8 @@ void mostrarTarea(Tarea tarea);
 //void mostrar(Tarea **arr_tareas);
 int consultaTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad);
 void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas);
+void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas);
+
 
 int main()
 {
@@ -48,6 +50,10 @@ int main()
     printf("===========================================");
 
     estadoTareas(arr_tareas, arr_tareasRealizadas, cant, completadas);
+
+    printf("===========================================");
+
+    buscaTareaID(arr_tareas, arr_tareasRealizadas, cant, completadas);
 
     return 0;
 }
@@ -154,6 +160,37 @@ void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad
             mostrarTarea(*arr_tareas[j]);
         }
     }
+}
+
+void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas)
+{
+    int ID_buscar;
+    printf("\n\n----------------------------------------------------\n");
+    do
+    {
+        printf("\nIngrese el Id de la tarea que desea buscar:\n");
+        scanf("%d", &ID_buscar);
+        fflush(stdin);
+    } while (ID_buscar<0);
+    
+    for(int i = 0; i < completadas; i++)
+    {
+        if(arr_tareasRealizadas[i]->TareaId == ID_buscar)
+        {
+            mostrarTarea(*arr_tareasRealizadas[i]);
+            printf("\n-Tarea ya completada :)");
+        }
+    }
+
+    for (int j = 0; j < cantidad; j++)
+    {
+        if(arr_tareas[j] != NULL && arr_tareas[j]->TareaId == ID_buscar)
+        {
+            mostrarTarea(*arr_tareas[j]);
+            printf("\n-Tarea sin completar aun :(");
+        }
+    }
+    
 }
 
 /*
