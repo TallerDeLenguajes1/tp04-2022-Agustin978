@@ -18,8 +18,8 @@ void mostrarTarea(Tarea tarea);
 //void mostrar(Tarea **arr_tareas);
 int consultaTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad);
 void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas);
-void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas);
-
+void buscaTareaPalabra(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas, char *busqueda);
+void liberarMemoria(Tarea **arr_tareas, int cantidad);
 
 int main()
 {
@@ -53,7 +53,16 @@ int main()
 
     printf("===========================================");
 
-    buscaTareaID(arr_tareas, arr_tareasRealizadas, cant, completadas);
+    //char *palabra_Clave;
+
+    //printf("\nIngrese la palabra clave a buscar:\n");
+    //scanf("%s", &palabra_Clave);
+    //fflush(stdin);
+
+    buscaTareaPalabra(arr_tareas, arr_tareasRealizadas, cant, completadas, "Revisar");
+
+    liberarMemoria(arr_tareas, cant);
+    liberarMemoria(arr_tareasRealizadas, completadas);
 
     return 0;
 }
@@ -162,35 +171,47 @@ void estadoTareas(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad
     }
 }
 
-void buscaTareaID(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas)
+void buscaTareaPalabra(Tarea **arr_tareas, Tarea **arr_tareasRealizadas, int cantidad, int completadas, char *busqueda)
 {
-    int ID_buscar;
+    //char* palabra_Clave;
     printf("\n\n----------------------------------------------------\n");
-    do
+
+    //printf("\nIngrese la palabra clave a buscar:\n");
+    //scanf("%s", &palabra_Clave);
+    //fflush(stdin);
+
+    printf("\n*****Realizando busqueda de %s en las tareas faltantes*****\n", busqueda);
+    for(int j = 0; j < cantidad; j++)
     {
-        printf("\nIngrese el Id de la tarea que desea buscar:\n");
-        scanf("%d", &ID_buscar);
-        fflush(stdin);
-    } while (ID_buscar<0);
-    
-    for(int i = 0; i < completadas; i++)
-    {
-        if(arr_tareasRealizadas[i]->TareaId == ID_buscar)
+        if(arr_tareas[j]!=NULL && strstr(arr_tareas[j]->Descripcion,busqueda)!=NULL)
         {
-            mostrarTarea(*arr_tareasRealizadas[i]);
-            printf("\n-Tarea ya completada :)");
+            mostrarTarea(*arr_tareas[j]);
+            printf("\n-Tarea sin completar aun :(\n");
         }
     }
 
-    for (int j = 0; j < cantidad; j++)
+    printf("\n*****Realizando busqueda de %s en las tareas finalizadas*****\n", busqueda);
+    for(int i = 0; i < completadas; i++)
     {
-        if(arr_tareas[j] != NULL && arr_tareas[j]->TareaId == ID_buscar)
+        if(strstr(arr_tareasRealizadas[i]->Descripcion,busqueda)!=NULL)
         {
-            mostrarTarea(*arr_tareas[j]);
-            printf("\n-Tarea sin completar aun :(");
+            mostrarTarea(*arr_tareasRealizadas[i]);
+            printf("\n-Tarea completada :)\n");
         }
     }
-    
+}
+
+void liberarMemoria(Tarea **arr_tareas, int cantidad)
+{
+    for(int i=0; i < cantidad; i++)
+    {
+        if (arr_tareas[i]!=NULL)
+        {
+            free(arr_tareas[i]->Descripcion); //Liberada la memoria usada para la descripcion
+        }
+        free(arr_tareas[i]); //Liberada la memoria utilizada para la posicion de la tarea
+    }
+    free(arr_tareas); //Liberada la memoria utilizada para almacenar todas las tareas
 }
 
 /*
