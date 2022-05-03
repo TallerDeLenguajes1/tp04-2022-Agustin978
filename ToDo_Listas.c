@@ -1,201 +1,155 @@
-#include<stdlib.h>
 #include<stdio.h>
-#include<conio.h>
 #include<string.h>
+#include<stdbool.h>
+#include<conio.h>
+#include<stdlib.h>
 
-typedef struct
+typedef struct Tarea
 {
-    int TareaId; //Numerado en ciclo iterativo
+    int TareaID;
     char *Descripcion;
-    int duracion; //Entre 10 y 100
+    int duracion;
 }Tarea;
 
-struct Nodo
+typedef struct Nodo
 {
     Tarea T;
     struct Nodo *siguiente;
-}typedef Nodo;
+}Nodo;
 
 typedef struct Nodo* Lista;
 
 //Declaracion de funciones
+int ingresaCant();
 Lista crearLista();
-int ingresaCantidad();
-void cargarTareas(Lista *listaT, int cantidad_tareas);
-Lista cargarTarea(Lista listaT, int ID);
-void mostrarTareas(Lista listaT);
-void mostrarTarea(Tarea tarea);
-void consultaTareas(Lista *tareas_pendientes, Lista *tareas_realizadas);
-void buscaTareaID(Lista *tareas_pendientes, Lista *tareas_realizadas, int ID);
+Lista insertaTareas(Lista tareas, int cantidad);
+Tarea cargaTarea(int ID);
+void mostrarTareas(Lista tareas); //Muestra todas las tareas pertenecientes a una lista
+void mostrarTarea(Tarea tarea); //Muestra una tarea en particular (sirve al consultar una a una las tareas)
+Lista consultaTareas(Lista tareas, Lista tareas_real,int cantidad);
 
 int main()
 {
-    Lista tarea_pendiente  = crearLista();
-    Lista tarea_realizada = crearLista();
-    int cantidad = ingresaCantidad();
+    int cantidad = ingresaCant();
+    Lista tareasPendientes = crearLista();
+    Lista tareasRealizadas = crearLista();
 
-    printf("\n============================================\n");
+    tareasPendientes = insertaTareas(tareasPendientes, cantidad);
+    //Carga de tareas a la lista
 
-    cargarTareas(&tarea_pendiente, cantidad);
+    mostrarTareas(tareasPendientes);
 
-    printf("\n============================================\n");
-
-    mostrarTareas(tarea_pendiente);
-
-    printf("\n============================================\n");
-
-    consultaTareas(&tarea_pendiente, &tarea_realizada);
-
-    printf("\n----------Mostrando tareas realizadas :)----------\n");
-    mostrarTareas(tarea_realizada);
-
-    printf("\n----------Mostrando tareas pendientes :(----------\n");
-    mostrarTareas(tarea_pendiente);
 
     return 0;
 }
 
-Lista crearLista()
+int ingresaCant()
 {
-    return NULL;
-}
-
-int ingresaCantidad()
-{
-    int cant;
-
+    int cant = 0;
     do
     {
-        printf("\n\nIngrese la cantidad de tareas que desea cargar:\n");
+        printf("\nIngrese la cantidad de tareas que debe realizar:");
         scanf("%d", &cant);
         fflush(stdin);
-    }while(cant<=0);
-
+    } while (cant<=0);
     return cant;
 }
 
-void cargarTareas(Lista *listaT, int cantidad)
+Lista crearLista()
 {
-    for(int i = 0; i < cantidad; i++)
-    {
-        *listaT = cargarTarea(listaT, i+1);
-
-    }
+    return NULL; //Al inicializar la cabeza apunta a un null
 }
 
-Lista catgarTarea(Lista listaT, int ID)
+Lista insertaTareas(Lista tareas, int cantidad)
 {
-    int duracionTarea;
-    char *Buff;
-    Buff = (char *)malloc(sizeof(char)*100);
+    printf("\n*****Ingreso las tareas*****\n");
+    for(int i = 0; i < cantidad; i++)
+    {
+        Lista nuevo = (Lista)malloc(sizeof(Nodo));
+        nuevo->T = cargaTarea(i+1);
+        nuevo->siguiente = tareas;
+        tareas = nuevo;
+        printf("\n=============================================================\n");
+    }
+    return tareas;
+}
 
-    printf("Ingrese la descripcion de la tarea %d: ", ID);
+Tarea cargaTarea(int ID)
+{
+    Tarea *nuevaTarea = (Tarea *)malloc(sizeof(Tarea)); 
+    //Reserva dinamica para la tarea que se va a ingresar
+    char *Buff = (char *)malloc(sizeof(char)*100);
+    //Reserva dinamica para ingresar la descripcion de la tarea
+    
+    nuevaTarea->TareaID = ID;
+
+    printf("\nIngrese la descripcion de la tarea %d: ", ID);
     gets(Buff);
+    fflush(stdin);
+
+    nuevaTarea->Descripcion = (char *)malloc(sizeof(Buff)+1);
+    //Reserva dinamica del espacio necesario para almacenar la descripcion
+    strcpy(nuevaTarea->Descripcion, Buff);
+    free(Buff);
 
     do
     {
-        printf("\nIngrese la duracion de la tarea (entre 10 y 100 horas):\n");
-        scanf("%d", &duracionTarea);
+        printf("\nIngrese la demora que tendra en concluir la tarea (entre 10 y 100 horas): ");
+        scanf("%d", &nuevaTarea->duracion);
         fflush(stdin);
-    }while (duracionTarea<10 || duracionTarea>100);
+    } while (nuevaTarea->duracion < 10 || nuevaTarea->duracion > 100);
 
-    if(listaT!=NULL)
-    {
-        Lista aux = listaT;
+    return *nuevaTarea;
 
-        while (aux->siguiente!=NULL)
-        {
-            aux = aux->siguiente;
-        }
-
-        aux->siguiente = (Lista)malloc(sizeof(Nodo));
-
-        aux->siguiente->T.duracion = duracionTarea;
-        aux->siguiente->T.Descripcion = (char *)malloc(sizeof(Buff)+1);
-        strcpy(aux->siguiente->T.Descripcion, Buff);
-        aux->siguiente->T.TareaId = ID;
-
-        aux->siguiente->siguiente = NULL;
-
-        return listaT;
-    }else
-    {
-        listaT = (Lista)malloc(sizeof(Nodo));
-
-        listaT->T.TareaId = ID;
-        listaT->T.duracion = duracionTarea;
-        listaT->T.Descripcion = (char*)malloc(sizeof(Buff)+1);
-        strcpy(listaT->T.Descripcion, Buff);
-
-        listaT->siguiente = NULL;
-        
-        return listaT;
-    }
-
-    free(Buff);
-    
 }
 
-void mostrarTareas(Lista listaT)
+void mostrarTareas(Lista tareas)
 {
-    while (listaT != NULL)
+    struct Nodo *seguidor = tareas;
+    printf("\n------Tareas a realizar :(------\n");
+    while (seguidor != NULL)
     {
-        mostrarTarea(listaT->T);
-        listaT = listaT->siguiente;
+        printf("\n--> Tarea ID: %d", seguidor->T.TareaID);
+        printf("\n--> Descripcion tarea: %s", seguidor->T.Descripcion);
+        printf("\n--> Duracion: %d hs", seguidor->T.duracion);
+        seguidor = seguidor->siguiente;
+        printf("\n-------------------------------------------------------------\n");
     }
 }
 
 void mostrarTarea(Tarea tarea)
 {
-    printf("\n-----Informacion de la tarea %d-----\n", tarea.TareaId);
-    printf("* Id: %d\n", tarea.TareaId);
-    printf("* Descripcion:");
-    puts(tarea.Descripcion);
-    printf("*Duracion: %s\n", tarea.duracion);
+    printf("\n----Datos de la tarea: %d----\n", tarea.TareaID);
+    printf("\n--> Tarea ID: %d", tarea.TareaID);
+    printf("\n--> Descripcion tarea: %s", tarea.Descripcion);
+    printf("\n--> Duracion: %d hs", tarea.duracion);
 }
 
-void consultaTareas(Lista *tareas_pendientes, Lista *tareas_realizadas)
+Lista consultaTareas(Lista tareas, Lista tareas_real,int cantidad)
 {
     int respuesta;
+    Lista seguidor = tareas;
+    Lista seguidorAux;
 
-    Lista listaPendientesAux = NULL;
-    Nodo *proxNodoAux = NULL;
-
-    printf("\n*****Revisando las tareas*****\n");
-
-    while (*tareas_pendientes!=NULL)
+    for(int i = 0; i < cantidad; i++)
     {
-        proxNodoAux = (*tareas_pendientes)->siguiente;
-
-        mostrarTarea((*tareas_pendientes)->T);
-
         do
         {
-            printf("\nSe completo esta tarea? si:0 / no:1");
+            mostrarTarea(seguidor->T);
+
+            printf("\n¿Se completo esta tarea? Si:0 / No:1");
             scanf("%d", &respuesta);
             fflush(stdin);
-        } while (respuesta !=0 || respuesta != 1);
+        } while (respuesta != 0 || respuesta != 1);
+        
+        if(respuesta == 0)
+        {
+            
 
-        if(respuesta == 1)
-        {
-            (*tareas_pendientes)->siguiente = *tareas_realizadas;
-            //El puntero del nodo a agregar a las tareas realizadas apunta al ultimo nodo que esa agregado en esta lista
-            *tareas_realizadas = *tareas_pendientes;
-            //La cabecera de tareas realizadas apunta al nodo de tareas pendientes donde se encuentra la tarea que quiero agregar
-        }else
-        {
-            //En caso que no se haya realizado la tarea
-            (*tareas_pendientes)->siguiente = listaPendientesAux;
-            //El puntero del nodo a agregar a la lista auxiliar de tareas pendientes apuntara al ultimo nodo agregado en la lista de tareas pendientes original
-            listaPendientesAux = *tareas_pendientes;
-            //Con la lista auxiliar de tareas pendientes apunto al ultimo nodo de la lista original de tareas pendientes
+            seguidor = seguidor->siguiente;
+
         }
 
-        *tareas_pendientes = proxNodoAux;
-        //El puntero de tareas pendientes apunta al proximo nodo en la lista
-        
+        seguidor = seguidor->siguiente;
     }
-    
-    *tareas_pendientes = listaPendientesAux;
 }
-
